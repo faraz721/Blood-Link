@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}AI Help{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+  <div style="text-align:center; margin-bottom:0.75rem;">
+    <h1 style="color: var(--primary);">🤖 BloodLink AI Help</h1>
+    <p class="form-hint">Ask questions about blood donation and eligibility. English, Urdu, Roman Urdu or Punjabi supported.</p>
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg msg-ai">Assalam-o-Alaikum! / Hello! Ask me anything about blood donation. I will answer from the BloodLink knowledge base.</div>
+  </div>
+
+  <form id="chatForm" class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Ask your question..." autocomplete="off" maxlength="1000">
+    <button type="submit" class="btn btn-primary">Send</button>
+  </form>
+  <p class="disclaimer">BloodLink AI provides information from its knowledge base and is not a substitute for professional medical advice.</p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}

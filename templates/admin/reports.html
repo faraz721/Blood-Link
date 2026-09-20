@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block floating %}{% endblock %}
+
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+  <h1 style="color: var(--primary);">Submitted Reports</h1>
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline btn-sm">← Dashboard</a>
+</div>
+
+{% for r in reports %}
+<div class="card" style="margin-bottom:0.85rem;">
+  <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+    <div>
+      <strong>{{ r.name }}</strong>
+      <span style="font-size:0.85rem; color:#666;"> · {{ r.status }} · {{ r.created_at.strftime('%Y-%m-%d %H:%M') if r.created_at else '' }}</span>
+      <p class="meta">Phone: {{ r.phone_number }} · WhatsApp: {{ r.whatsapp_number }}</p>
+      <p class="meta">{{ r.district }}{% if r.village %} / {{ r.village.village_name }}{% endif %}</p>
+      <p style="margin-top:0.5rem; white-space:pre-wrap;">{{ r.message }}</p>
+    </div>
+    <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+      {% if r.status != 'reviewed' %}
+      <form method="post" action="{{ url_for('admin.mark_reviewed', report_id=r.id) }}">
+        <button class="btn btn-outline btn-sm">Mark Reviewed</button>
+      </form>
+      {% endif %}
+      <form method="post" action="{{ url_for('admin.delete_report', report_id=r.id) }}" onsubmit="return confirm('Delete this report?');">
+        <button class="btn btn-danger btn-sm">Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% else %}
+<p class="form-hint">No reports yet.</p>
+{% endfor %}
+{% endblock %}

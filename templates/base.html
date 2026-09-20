@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BloodLink{% endblock %} — Find Blood. Save Lives.</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <nav class="navbar">
+    {# Brand goes to role home: admin dashboard / donor dashboard / public index #}
+    {% if is_admin %}
+      <a href="{{ url_for('admin.dashboard') }}" class="nav-brand">BLOODLINK</a>
+    {% elif is_donor %}
+      <a href="{{ url_for('donor.dashboard') }}" class="nav-brand">BLOODLINK</a>
+    {% else %}
+      <a href="{{ url_for('index') }}" class="nav-brand">BLOODLINK</a>
+    {% endif %}
+
+    <ul class="nav-links">
+      {% if is_admin %}
+        {# ========== ADMIN NAVBAR ========== #}
+        <li><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('admin.donors') }}">Manage Donors</a></li>
+        <li><a href="{{ url_for('admin.reports') }}">Reports</a></li>
+        <li><a href="{{ url_for('admin.logout') }}">Logout</a></li>
+      {% elif is_donor %}
+        {# ========== DONOR NAVBAR (no public Home) ========== #}
+        <li><a href="{{ url_for('donor.dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('search.find_donor') }}">Find Donor</a></li>
+        <li><a href="{{ url_for('donor.profile') }}">My Profile</a></li>
+        <li><a href="{{ url_for('ai.ai_help') }}">AI Help</a></li>
+        <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+      {% else %}
+        {# ========== PUBLIC / GUEST NAVBAR ========== #}
+        <li><a href="{{ url_for('index') }}">Home</a></li>
+        <li><a href="{{ url_for('search.find_donor') }}">Find Donor</a></li>
+        <li><a href="{{ url_for('auth.become_donor') }}">Become Donor</a></li>
+        <li><a href="{{ url_for('index') }}#about">About</a></li>
+        <li><a href="{{ url_for('admin.login') }}">Admin Login</a></li>
+      {% endif %}
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    {% if is_admin %}
+      <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('admin.donors') }}">Manage Donors</a>
+      <a href="{{ url_for('admin.reports') }}">Reports</a>
+      <a href="{{ url_for('admin.logout') }}">Logout</a>
+    {% elif is_donor %}
+      <a href="{{ url_for('donor.dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('search.find_donor') }}">Find Donor</a>
+      <a href="{{ url_for('donor.profile') }}">My Profile</a>
+      <a href="{{ url_for('ai.ai_help') }}">AI Help</a>
+      <a href="{{ url_for('auth.logout') }}">Logout</a>
+    {% else %}
+      <a href="{{ url_for('index') }}">Home</a>
+      <a href="{{ url_for('search.find_donor') }}">Find Donor</a>
+      <a href="{{ url_for('auth.become_donor') }}">Become Donor</a>
+      <a href="{{ url_for('index') }}#about">About</a>
+      <a href="{{ url_for('admin.login') }}">Admin Login</a>
+    {% endif %}
+  </div>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {# Floating buttons only for public + donor pages (NOT for admin) #}
+  {% block floating %}
+    {% if not is_admin %}
+    <div class="float-btns">
+      <a href="{{ url_for('ai.ai_help') }}" class="float-btn float-ai">🤖 AI Help</a>
+      <a href="{{ url_for('reports.report') }}" class="float-btn float-report">⚠ Report a Problem</a>
+    </div>
+    {% endif %}
+  {% endblock %}
+
+  <footer>
+    BloodLink — Talagang &amp; Chakwal · Find Blood. Save Lives.
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

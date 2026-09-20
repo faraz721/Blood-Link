@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>BLOODLINK</h1>
+  <p class="tagline">Find Blood. Save Lives.</p>
+  <p>Find available blood donors in Talagang and Chakwal or become a donor and help someone in need.</p>
+  <div class="hero-actions">
+    <a href="{{ url_for('search.find_donor') }}" class="btn btn-primary">Find a Donor</a>
+    <a href="{{ url_for('auth.become_donor') }}" class="btn btn-outline">Become a Donor</a>
+  </div>
+</section>
+
+<section class="features">
+  <div class="card feature-card">
+    <h3>Find Donors</h3>
+    <p>Search available donors by blood group, district and village across Talagang and Chakwal.</p>
+  </div>
+  <div class="card feature-card">
+    <h3>Become a Donor</h3>
+    <p>Register as a blood donor, manage your availability and help save lives in your community.</p>
+  </div>
+  <div class="card feature-card">
+    <h3>AI Help</h3>
+    <p>Ask BloodLink AI questions about blood donation and eligibility. Available in multiple languages.</p>
+  </div>
+</section>
+
+<section id="about" style="margin-top: 2.5rem;">
+  <div class="card">
+    <h2 style="color: var(--primary); margin-bottom: 0.6rem;">About BloodLink</h2>
+    <p>BloodLink is a free community platform dedicated to connecting people in need of blood with available donors in <strong>Talagang District</strong> and <strong>Chakwal District</strong> only.</p>
+    <p style="margin-top: 0.6rem;">We do not display fake statistics. All donor information is provided by registered users who control their own availability.</p>
+  </div>
+</section>
+{% endblock %}

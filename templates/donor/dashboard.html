@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+
+{% block content %}
+<h1 style="color: var(--primary);">Welcome, {{ profile.full_name }}</h1>
+
+<div class="card" style="margin-top: 1.25rem; max-width: 520px;">
+  <p><strong>Blood Group:</strong> {{ profile.blood_group }}</p>
+  <p><strong>District:</strong> {{ profile.district }}</p>
+  <p><strong>Village:</strong> {{ profile.village.village_name if profile.village else '—' }}</p>
+  <p><strong>Phone:</strong> {{ current_user.phone }}</p>
+  <p><strong>WhatsApp:</strong> {{ profile.whatsapp_number or current_user.phone }}</p>
+  <p><strong>Availability:</strong>
+    {% if profile.is_available %}
+      <span style="color: #065f46; font-weight:700;">Available</span>
+    {% else %}
+      <span style="color: #991b1b; font-weight:700;">Unavailable</span>
+    {% endif %}
+  </p>
+
+  <div style="display:flex; gap:0.6rem; margin-top:1.2rem; flex-wrap:wrap;">
+    <form method="post" action="{{ url_for('donor.toggle_availability') }}">
+      <button type="submit" class="btn {% if profile.is_available %}btn-outline{% else %}btn-primary{% endif %}">
+        Mark as {% if profile.is_available %}Unavailable{% else %}Available{% endif %}
+      </button>
+    </form>
+    <a href="{{ url_for('donor.profile') }}" class="btn btn-outline">Edit Profile</a>
+  </div>
+</div>
+{% endblock %}

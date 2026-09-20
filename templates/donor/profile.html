@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 520px; margin: 0 auto;">
+  <h1 style="color: var(--primary); margin-bottom: 1rem;">My Profile</h1>
+
+  <form method="post">
+    <div class="form-group">
+      <label for="full_name">Full Name *</label>
+      <input type="text" id="full_name" name="full_name" required value="{{ profile.full_name }}">
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone Number *</label>
+      <input type="tel" id="phone" name="phone" required value="{{ current_user.phone }}">
+      <p class="form-hint">Changing this updates your login ID.</p>
+    </div>
+
+    <div class="form-group" id="whatsapp_group">
+      <label for="whatsapp_number">WhatsApp Number</label>
+      <input type="tel" id="whatsapp_number" name="whatsapp_number"
+        value="{{ profile.whatsapp_number or '' }}" placeholder="03XXXXXXXXX">
+      <p class="form-hint">Optional. Tick the box below if same as phone.</p>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="whatsapp_same" name="whatsapp_same"
+        {% if profile.whatsapp_number and profile.whatsapp_number == current_user.phone %}checked{% endif %}>
+      <label for="whatsapp_same" style="margin:0;">Same as Phone Number</label>
+    </div>
+
+    <div class="form-group">
+      <label for="blood_group">Blood Group *</label>
+      <select id="blood_group" name="blood_group" required>
+        {% for bg in blood_groups %}
+          <option value="{{ bg }}" {% if profile.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="district">District *</label>
+      <select id="district" name="district" required>
+        {% for d in districts %}
+          <option value="{{ d }}" {% if profile.district == d %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="village_id">Village / Area *</label>
+      <select id="village_id" name="village_id" required>
+        <option value="">Select Village</option>
+        {% for v in villages %}
+          <option value="{{ v.id }}" {% if profile.village_id == v.id %}selected{% endif %}>{{ v.village_name }} ({{ v.district }})</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="is_available" name="is_available" {% if profile.is_available %}checked{% endif %}>
+      <label for="is_available" style="margin:0;">Available for donation</label>
+    </div>
+
+    <hr style="margin:1.2rem 0; border:none; border-top:1px solid #ddd;">
+
+    <div class="form-group">
+      <label for="password">New Password (leave blank to keep current)</label>
+      <input type="password" id="password" name="password" minlength="8">
+    </div>
+    <div class="form-group">
+      <label for="confirm_password">Confirm New Password</label>
+      <input type="password" id="confirm_password" name="confirm_password" minlength="8">
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width:100%;">Save Changes</button>
+  </form>
+</div>
+{% endblock %}

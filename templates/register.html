@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Register as Donor{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 520px; margin: 0 auto;">
+  <h1 style="color: var(--primary); margin-bottom: 1rem;">Create Donor Account</h1>
+
+  <form method="post" action="{{ url_for('auth.register') }}">
+    <div class="form-group">
+      <label for="full_name">Full Name *</label>
+      <input type="text" id="full_name" name="full_name" required value="{{ form.get('full_name', '') }}">
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone Number *</label>
+      <input type="tel" id="phone" name="phone" required placeholder="03XXXXXXXXX" value="{{ form.get('phone', '') }}">
+      <p class="form-hint">This will be your login ID. Format: 03XXXXXXXXX</p>
+    </div>
+
+    <div class="form-group" id="whatsapp_group">
+      <label for="whatsapp_number">WhatsApp Number</label>
+      <input type="tel" id="whatsapp_number" name="whatsapp_number" placeholder="03XXXXXXXXX" value="{{ form.get('whatsapp_number', '') }}">
+      <p class="form-hint">Optional. Leave blank if same as phone, or tick the box below.</p>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="whatsapp_same" name="whatsapp_same">
+      <label for="whatsapp_same" style="margin:0;">Same as Phone Number</label>
+    </div>
+
+    <div class="form-group">
+      <label for="blood_group">Blood Group *</label>
+      <select id="blood_group" name="blood_group" required>
+        <option value="">Select</option>
+        {% for bg in blood_groups %}
+          <option value="{{ bg }}" {% if form.get('blood_group') == bg %}selected{% endif %}>{{ bg }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="district">District *</label>
+      <select id="district" name="district" required>
+        <option value="">Select District</option>
+        {% for d in districts %}
+          <option value="{{ d }}" {% if form.get('district') == d %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="village_id">Village / Area *</label>
+      <select id="village_id" name="village_id" required>
+        <option value="">Select Village</option>
+        {% for v in villages %}
+          <option value="{{ v.id }}" data-district="{{ v.district }}">{{ v.village_name }} ({{ v.district }})</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password *</label>
+      <input type="password" id="password" name="password" required minlength="8">
+      <p class="form-hint">Minimum 8 characters</p>
+    </div>
+
+    <div class="form-group">
+      <label for="confirm_password">Confirm Password *</label>
+      <input type="password" id="confirm_password" name="confirm_password" required minlength="8">
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width:100%;">Create Account</button>
+  </form>
+  <p style="margin-top:1rem; text-align:center;">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Report a Problem{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 520px; margin: 0 auto;">
+  <h1 style="color: var(--primary); margin-bottom: 1rem;">Report a Problem</h1>
+  <form method="post">
+    <div class="form-group">
+      <label for="name">Full Name *</label>
+      <input type="text" id="name" name="name" required value="{{ form.get('name', '') }}">
+    </div>
+    <div class="form-group">
+      <label for="whatsapp_number">WhatsApp Number *</label>
+      <input type="tel" id="whatsapp_number" name="whatsapp_number" required placeholder="03XXXXXXXXX" value="{{ form.get('whatsapp_number', '') }}">
+    </div>
+    <div class="form-group">
+      <label for="phone_number">Phone Number *</label>
+      <input type="tel" id="phone_number" name="phone_number" required placeholder="03XXXXXXXXX" value="{{ form.get('phone_number', '') }}">
+    </div>
+    <div class="form-group">
+      <label for="district">District *</label>
+      <select id="district" name="district" required>
+        <option value="">Select District</option>
+        {% for d in districts %}
+          <option value="{{ d }}" {% if form.get('district') == d %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="village_id">Village / Area *</label>
+      <select id="village_id" name="village_id" required>
+        <option value="">Select Village</option>
+        {% for v in villages %}
+          <option value="{{ v.id }}">{{ v.village_name }} ({{ v.district }})</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="message">Problem / Message *</label>
+      <textarea id="message" name="message" rows="5" required>{{ form.get('message', '') }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary" style="width:100%;">Submit Report</button>
+  </form>
+</div>
+{% endblock %}

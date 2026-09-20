@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Manage Donors{% endblock %}
+{% block floating %}{% endblock %}
+
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+  <h1 style="color: var(--primary);">Manage Donors</h1>
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline btn-sm">← Dashboard</a>
+</div>
+
+<form method="get" class="card" style="margin-bottom:1.25rem;">
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:0.75rem;">
+    <div class="form-group" style="margin:0;">
+      <label>Search</label>
+      <input type="text" name="q" value="{{ filters.get('q','') }}" placeholder="Name or phone">
+    </div>
+    <div class="form-group" style="margin:0;">
+      <label>Blood Group</label>
+      <select name="blood_group">
+        <option value="">All</option>
+        {% for bg in blood_groups %}
+          <option value="{{ bg }}" {% if filters.get('blood_group')==bg %}selected{% endif %}>{{ bg }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group" style="margin:0;">
+      <label>District</label>
+      <select name="district">
+        <option value="">All</option>
+        {% for d in districts %}
+          <option value="{{ d }}" {% if filters.get('district')==d %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group" style="margin:0;">
+      <label>Availability</label>
+      <select name="availability">
+        <option value="">All</option>
+        <option value="available" {% if filters.get('availability')=='available' %}selected{% endif %}>Available</option>
+        <option value="unavailable" {% if filters.get('availability')=='unavailable' %}selected{% endif %}>Unavailable</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin:0;">
+      <label>Suspension</label>
+      <select name="suspension">
+        <option value="">All</option>
+        <option value="active" {% if filters.get('suspension')=='active' %}selected{% endif %}>Active</option>
+        <option value="suspended" {% if filters.get('suspension')=='suspended' %}selected{% endif %}>Suspended</option>
+      </select>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary btn-sm" style="margin-top:0.75rem;">Filter</button>
+</form>
+
+{% for profile, user, loc in results %}
+<div class="card" style="margin-bottom:0.85rem;">
+  <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+    <div>
+      <strong>{{ profile.full_name }}</strong> · <span class="blood-badge" style="font-size:0.8rem;">{{ profile.blood_group }}</span>
+      <p class="meta">{{ profile.district }} / {{ loc.village_name }} · {{ user.phone }}</p>
+      <p class="meta">
+        {% if user.is_suspended %}<span style="color:#991b1b;">SUSPENDED</span>{% else %}Active{% endif %}
+        · {% if profile.is_available %}Available{% else %}Unavailable{% endif %}
+      </p>
+    </div>
+    <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+      {% if user.is_suspended %}
+        <form method="post" action="{{ url_for('admin.unsuspend_donor', user_id=user.id) }}" onsubmit="return confirm('Unsuspend this donor?');">
+          <button class="btn btn-outline btn-sm">Unsuspend</button>
+        </form>
+      {% else %}
+        <form method="post" action="{{ url_for('admin.suspend_donor', user_id=user.id) }}" onsubmit="return confirm('Suspend this donor?');">
+          <button class="btn btn-outline btn-sm">Suspend</button>
+        </form>
+      {% endif %}
+      <form method="post" action="{{ url_for('admin.delete_donor', user_id=user.id) }}" onsubmit="return confirm('DELETE this donor permanently?');">
+        <button class="btn btn-danger btn-sm">Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% else %}
+<p class="form-hint">No donors found.</p>
+{% endfor %}
+{% endblock %}

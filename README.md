@@ -1,214 +1,202 @@
-Welcome to the Blood Donor System! This simple website connects blood donors with people who need blood. It has a clean red-and-white design, fun animations (like sliding buttons and a pulsing logo), and works great on phones and computers.
-Features
+# BLOODLINK
+**Find Blood. Save Lives.**
 
-Homepage: Three buttons to become a donor, search donors, or log in as admin. Buttons bounce when they load!
-Become a Donor: Form to enter:
-Name, blood group (e.g., A+, O-), age (18–60), city, ph# 🩸 Blood Donor System
-
-Welcome to the **Blood Donor System**!  
-This is a simple yet dynamic website that connects **blood donors** with people in need.  
-It features a clean **red-and-white design**, responsive layout, and smooth animations.
+A production-style blood donor platform for **Talagang District** and **Chakwal District** only.
 
 ---
 
-## 🚀 Features
+## Features
 
-- **Homepage**  
-  - Three main buttons: Become a Donor, Search Donors, Admin Login  
-  - Buttons bounce on load for a friendly look
-
-- **Become a Donor**  
-  - Fill in details:  
-    - Name, Blood Group (e.g., A+, O-), Age (18–60), City, Phone  
-    - Email and WhatsApp (optional)  
-  - Contact links open apps directly (e.g., WhatsApp, Email)
-
-- **Search Donors**  
-  - Search by **city** or **blood group**  
-  - View all donors in a table with clickable contact options
-
-- **Admin Panel**  
-  - Login with password: `admin123`  
-  - View or delete single/multiple donors
-
-- **About Us**  
-  - Explains the mission to help people in emergencies
-
-- **Contact Page**  
-  - Shows developer's photo (zoom on hover)  
-  - Includes clickable links for:
-    - Email  
-    - LinkedIn  
-    - Instagram  
-    - WhatsApp
-
-- **Animations**  
-  - Sliding headers, pulsing logo, hover effects, bouncing buttons
+- Find available blood donors by blood group, district and village
+- Donor registration & secure login (phone + password)
+- Donor dashboard & profile management (availability, WhatsApp, phone update)
+- Global floating **AI Help** (RAG-powered) – answers in English, Urdu, Roman Urdu or Punjabi
+- Global **Report a Problem** form
+- Full Admin panel (live stats, donor management, suspend/unsuspend/delete, reports)
+- Responsive design (desktop + mobile hamburger menu)
+- Secure: password hashing, rate limiting, session protection, server-side authorization
 
 ---
 
-## 🛠️ Technologies Used
+## Tech Stack
 
-- **PHP** — Backend (forms, search, admin)
-- **MySQL** — Stores donor & admin data
-- **HTML/CSS** — Layout & styling (red-and-white theme, Poppins font)
-- **JavaScript** — Animations & input validations
+| Layer      | Technology                          |
+|------------|-------------------------------------|
+| Frontend   | HTML5, CSS3, Vanilla JavaScript     |
+| Backend    | Python, Flask                       |
+| Database   | PostgreSQL (Supabase Free recommended) |
+| AI / RAG   | Local TF-IDF retrieval + configurable LLM |
+| Deployment | Render Free Web Service             |
 
 ---
 
-## ⚙️ How to Set Up (Localhost)
+## Folder Structure
 
-### 1. Clone the Repository
-
-Install Git: [https://git-scm.com/downloads](https://git-scm.com/downloads)
-
-```bash
-git clone https://github.com/faraz721/blood-donor-system.git
-cd blood-donor-system
+```
+bloodlink/
+├── app.py
+├── requirements.txt
+├── Procfile
+├── .env.example
+├── .gitignore
+├── README.md
+├── config/settings.py
+├── routes/          (auth, donor, search, admin, reports, ai)
+├── models/          (user, donor, location, report, admin, login_attempt)
+├── services/        (auth, phone, rag, ai)
+├── knowledge_base/  (blood_donation_guide.pdf)
+├── data/locations.json
+├── templates/
+├── static/
+├── scripts/         (seed, create_admin, build_rag_index)
+└── tests/
 ```
 
 ---
 
-### 2. Install XAMPP
+## Local Setup (Windows PowerShell)
 
-Download & install XAMPP: [https://www.apachefriends.org](https://www.apachefriends.org)
+### 1. Clone / Extract
+```powershell
+cd path\to\bloodlink
+```
 
-Open XAMPP Control Panel and start **Apache** and **MySQL**
+### 2. Create virtual environment
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+### 3. Install dependencies
+```powershell
+pip install -r requirements.txt
+```
+
+### 4. Environment variables
+```powershell
+copy .env.example .env
+```
+Edit `.env` and set at least:
+- `SECRET_KEY` (long random string)
+- `DATABASE_URL` (Supabase connection string – see below)
+- `AI_API_KEY` (optional – for live AI answers)
+- `ADMIN_USERNAME` / `ADMIN_PASSWORD`
+
+### 5. Database (Supabase)
+1. Create free account at https://supabase.com
+2. Create a new project
+3. Go to **Project Settings → Database** → copy the **URI** connection string
+4. Paste into `.env` as `DATABASE_URL=postgresql://postgres:...@db.xxx.supabase.co:5432/postgres`
+5. Run:
+```powershell
+python -c "from app import create_app; from models import db; app=create_app(); app.app_context().push(); db.create_all(); print('Tables created')"
+python scripts/seed_locations.py
+python scripts/create_admin.py
+```
+
+### 6. Build RAG index
+```powershell
+python scripts/build_rag_index.py
+```
+(Replace `knowledge_base/blood_donation_guide.pdf` with your real PDF first if desired.)
+
+### 7. Run locally
+```powershell
+python app.py
+```
+Open http://127.0.0.1:5000
 
 ---
 
-### 3. Set Up the Database
+## AI Help – Multi-language Support
 
-1. Go to `http://localhost/phpmyadmin`
-2. Create a database:
-   - Click **New**
-   - Name it `blood_donor_db`
-   - Click **Create**
+Users can ask questions in:
+- English
+- Urdu (Arabic script)
+- Roman Urdu
+- Punjabi (Shahmukhi or Roman)
 
-3. Run SQL code to create tables:
-
-```sql
-USE blood_donor_db;
-
-CREATE TABLE donors (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    blood_group VARCHAR(3) NOT NULL,
-    age INT NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    phone VARCHAR(15) NOT NULL,
-    email VARCHAR(100),
-    whatsapp VARCHAR(15),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE admin (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    password VARCHAR(255) NOT NULL
-);
-```
-
-4. Generate Admin Password:
-
-Create a new file named `hash_password.php` in your project folder with the following code:
-
-```php
-<?php
-$password = "admin123";
-echo password_hash($password, PASSWORD_DEFAULT);
-?>
-```
-
-- Open in browser: `http://localhost/blood-donor-system/hash_password.php`
-- Copy the hashed password
-
-5. Insert into the `admin` table:
-
-- Go to `blood_donor_db > admin > Insert`
-- Add:
-  - `id`: 1  
-  - `password`: *Paste the hash*  
-- Click **Go**
-
-> **Note:** Delete `hash_password.php` after use.
+The AI detects the language of the question and replies in the **same language**.  
+System prompt enforces: answer only from retrieved knowledge-base context; never invent medical facts.
 
 ---
 
-### 4. Move Files to XAMPP
+## Village Data
 
-- Copy the entire folder to:
-
-```
-C:\xampp\htdocs\blood-donor-system\
-```
-
-- Ensure `me.jpg` is placed in:
-
-```
-C:\xampp\htdocs\blood-donor-system\media\
-```
+Villages are loaded from `data/locations.json` (curated list sourced primarily from Wikipedia “List of villages in Talagang/Chakwal District”).  
+The list is **not claimed as a complete official PBS Mouza Census extract**.  
+Village field is a **dropdown only** – free text is never accepted.  
+Selecting a district filters the village list accordingly.
 
 ---
 
-### 5. Test the Website
+## Admin
 
-Open in browser:
-
-```
-http://localhost/blood-donor-system/
-```
-
-Test the following pages:
-
-- Home → `/index.php`
-- About Us → `/about.php`
-- Contact → `/contact.php`
-- Become a Donor → `/donor_form.php`
-- Search Donors → `/search_donors.php`
-- Admin Login → `/admin_login.php` → use `admin123`
+After running `scripts/create_admin.py`:
+- Go to `/admin/login`
+- Use the username/password from your `.env`
 
 ---
 
-### 6. Use the Website
+## Deployment (GitHub → Render)
 
-- **Become a Donor:**  
-  - Age must be 18–60  
-  - Phone should be valid (`+923001234567`)  
-- **Search Donors:**  
-  - Filter by blood group or city  
-- **Admin Panel:**  
-  - View or delete donor records  
-- **Contact Page:**  
-  - Try all contact links
-
----
-
-## 🧰 Troubleshooting
-
-- **Website doesn’t load?**  
-  - Make sure Apache and MySQL are running in XAMPP
-
-- **Database errors?**  
-  - Check `config.php`:
-    ```php
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "blood_donor_db";
-    ```
-
-- **Admin login fails?**  
-  - Make sure hashed password for `admin123` is correctly inserted
-
-- **Image not showing?**  
-  - Confirm `me.jpg` exists in the `/media` folder
+1. Push the project to a GitHub repository (**do not commit `.env`**).
+2. On https://render.com create a **Web Service**.
+3. Connect the GitHub repo.
+4. Settings:
+   - **Environment**: Python
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `gunicorn app:app`
+5. Add environment variables (same as `.env`):
+   - `DATABASE_URL`
+   - `SECRET_KEY`
+   - `AI_API_KEY`, `AI_BASE_URL`, `AI_MODEL` (optional)
+   - `ADMIN_USERNAME`, `ADMIN_PASSWORD` (for bootstrap)
+6. Deploy.
+7. After first deploy, open a Render Shell and run:
+   ```
+   python scripts/seed_locations.py
+   python scripts/create_admin.py
+   python scripts/build_rag_index.py
+   ```
 
 ---
 
-## 📬 Contact
+## Known Free-Tier Limitations
 
-Reach out to **Ahmed Faraz Malik**:
+- **Render Free Web Service** spins down after ~15 minutes of inactivity. The first request after sleep will take longer (cold start). The app still works normally after waking.
+- Do **not** implement artificial self-pinging to bypass platform limits.
+- Prefer **Supabase Free PostgreSQL** over Render Free Postgres (Render free Postgres expires after 30 days).
 
-- 📧 Email: [721ahmedfarazmalik@gmail.com](mailto:721ahmedfarazmalik@gmail.com)  
-- 🔗 LinkedIn: [linkedin.com/in/ahmed-faraz-malik-88b635319](https://linkedin.com/in/ahmed-faraz-malik-88b635319)  
-- 📸 Instagram: [instagram.com/farazzz.malik](https://instagram.com/farazzz.malik)
+---
+
+## Security Notes
+
+- Passwords are hashed (Werkzeug).
+- Login throttling / temporary lockout after repeated failures.
+- Generic error messages on failed login.
+- Admin and donor sessions are separate.
+- Authorization is enforced server-side on every protected route.
+- Suspended donors cannot log in and never appear in public search.
+- API keys and secrets stay in environment variables only.
+
+---
+
+## Testing Checklist (quick)
+
+- [ ] Home loads (desktop + mobile)
+- [ ] Register donor (validation, duplicate phone)
+- [ ] Login / Logout / session persists
+- [ ] Profile update (phone, WhatsApp same-as-phone, availability)
+- [ ] Search filters + suspended donors hidden
+- [ ] Report form + admin can view/mark/delete
+- [ ] Admin dashboard live counts
+- [ ] Suspend / Unsuspend / Delete donor
+- [ ] AI Help (English + Urdu/Roman questions)
+- [ ] Unauthorized access blocked
+
+---
+
+## License
+
+This is a portfolio / community project. Use responsibly.

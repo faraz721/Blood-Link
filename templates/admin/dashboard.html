@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.25rem;">
+  <h1 style="color: var(--primary);">Admin Dashboard</h1>
+</div>
+
+<div class="stats-row">
+  <div class="stat-box"><div class="label">Total Donors</div><div class="value">{{ total }}</div></div>
+  <div class="stat-box"><div class="label">Talagang Donors</div><div class="value">{{ talagang }}</div></div>
+  <div class="stat-box"><div class="label">Chakwal Donors</div><div class="value">{{ chakwal }}</div></div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-box"><div class="label">Available</div><div class="value">{{ available }}</div></div>
+  <div class="stat-box"><div class="label">Unavailable</div><div class="value">{{ unavailable }}</div></div>
+  <div class="stat-box"><div class="label">Suspended</div><div class="value">{{ suspended }}</div></div>
+</div>
+
+<h2 style="color: var(--primary); margin: 1.5rem 0 0.75rem; font-size: 1.15rem;">Donors by Blood Group</h2>
+<div class="stats-row">
+  {% for bg, count in blood_group_stats %}
+  <div class="stat-box">
+    <div class="label">{{ bg }}</div>
+    <div class="value">{{ count }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem;">
+  <div class="card">
+    <h3 style="color:var(--primary); margin-bottom:0.6rem;">TALAGANG</h3>
+    <p>Total: {{ talagang_stats.total }}</p>
+    <p>Available: {{ talagang_stats.available }}</p>
+    <p>Unavailable: {{ talagang_stats.unavailable }}</p>
+    <p>Suspended: {{ talagang_stats.suspended }}</p>
+  </div>
+  <div class="card">
+    <h3 style="color:var(--primary); margin-bottom:0.6rem;">CHAKWAL</h3>
+    <p>Total: {{ chakwal_stats.total }}</p>
+    <p>Available: {{ chakwal_stats.available }}</p>
+    <p>Unavailable: {{ chakwal_stats.unavailable }}</p>
+    <p>Suspended: {{ chakwal_stats.suspended }}</p>
+  </div>
+</div>
+{% endblock %}
