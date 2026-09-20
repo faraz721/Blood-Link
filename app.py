@@ -46,8 +46,12 @@ def create_app(config_class=Config):
         ):
             return redirect(url_for("donor.dashboard"))
         return render_template("index.html")
-
-    @app.context_processor
+        
+    @app.route("/health")
+    def health():
+        return "OK", 200
+    
+    @app.context_processor 
     def inject_globals():
         is_admin = bool(session.get("admin_id"))
         is_donor = (
