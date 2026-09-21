@@ -100,9 +100,29 @@ def dashboard():
             .filter(DonorProfile.district == dist, User.is_suspended.is_(True))
             .count()
         )
-        return {"total": t, "available": a, "unavailable": u, "suspended": s}
 
-    # Blood group counts (always show all groups, even if 0)
+        # Blood-group-wise counts for this district (always show all groups)
+        bg_counts = {bg: 0 for bg in Config.BLOOD_GROUPS}
+        rows = (
+            db.session.query(DonorProfile.blood_group, db.func.count(DonorProfile.id))
+            .filter(DonorProfile.district == dist)
+            .group_by(DonorProfile.blood_group)
+            .all()
+        )
+        for bg, cnt in rows:
+            if bg in bg_counts:
+                bg_counts[bg] = cnt
+        blood_groups = [(bg, bg_counts[bg]) for bg in Config.BLOOD_GROUPS]
+
+        return {
+            "total": t,
+            "available": a,
+            "unavailable": u,
+            "suspended": s,
+            "blood_groups": blood_groups,
+        }
+
+    # Overall blood group counts (kept for summary row)
     bg_counts = {bg: 0 for bg in Config.BLOOD_GROUPS}
     rows = (
         db.session.query(DonorProfile.blood_group, db.func.count(DonorProfile.id))

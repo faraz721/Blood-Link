@@ -6,6 +6,7 @@
   <h1 style="color: var(--primary);">Admin Dashboard</h1>
 </div>
 
+<!-- ===== Overall summary ===== -->
 <div class="stats-row">
   <div class="stat-box"><div class="label">Total Donors</div><div class="value">{{ total }}</div></div>
   <div class="stat-box"><div class="label">Talagang Donors</div><div class="value">{{ talagang }}</div></div>
@@ -18,7 +19,7 @@
   <div class="stat-box"><div class="label">Suspended</div><div class="value">{{ suspended }}</div></div>
 </div>
 
-<h2 style="color: var(--primary); margin: 1.5rem 0 0.75rem; font-size: 1.15rem;">Donors by Blood Group</h2>
+<h2 style="color: var(--primary); margin: 1.5rem 0 0.75rem; font-size: 1.15rem;">Overall Donors by Blood Group</h2>
 <div class="stats-row">
   {% for bg, count in blood_group_stats %}
   <div class="stat-box">
@@ -28,20 +29,56 @@
   {% endfor %}
 </div>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem;">
-  <div class="card">
-    <h3 style="color:var(--primary); margin-bottom:0.6rem;">TALAGANG</h3>
-    <p>Total: {{ talagang_stats.total }}</p>
-    <p>Available: {{ talagang_stats.available }}</p>
-    <p>Unavailable: {{ talagang_stats.unavailable }}</p>
-    <p>Suspended: {{ talagang_stats.suspended }}</p>
+<!-- ===== Analytics section (district-separated) ===== -->
+<h2 style="color: var(--primary); margin: 2rem 0 1rem; font-size: 1.25rem;">Analytics</h2>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+
+  <!-- TALAGANG -->
+  <div class="card" style="padding:1.25rem;">
+    <h3 style="color:var(--primary); margin-bottom:0.75rem; font-size:1.1rem;">TALAGANG</h3>
+    <p style="margin:0.3rem 0;"><strong>Total:</strong> {{ talagang_stats.total }}</p>
+    <p style="margin:0.3rem 0;"><strong>Available:</strong> {{ talagang_stats.available }}</p>
+    <p style="margin:0.3rem 0;"><strong>Unavailable:</strong> {{ talagang_stats.unavailable }}</p>
+    <p style="margin:0.3rem 0;"><strong>Suspended:</strong> {{ talagang_stats.suspended }}</p>
+
+    <h4 style="color:var(--primary); margin:1rem 0 0.5rem; font-size:0.95rem;">Blood Group Breakdown</h4>
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.4rem;">
+      {% for bg, count in talagang_stats.blood_groups %}
+      <div style="background:var(--bg-secondary, #f5f5f5); border-radius:6px; padding:0.4rem; text-align:center;">
+        <div style="font-size:0.75rem; color:#666;">{{ bg }}</div>
+        <div style="font-weight:700; font-size:1rem;">{{ count }}</div>
+      </div>
+      {% endfor %}
+    </div>
   </div>
-  <div class="card">
-    <h3 style="color:var(--primary); margin-bottom:0.6rem;">CHAKWAL</h3>
-    <p>Total: {{ chakwal_stats.total }}</p>
-    <p>Available: {{ chakwal_stats.available }}</p>
-    <p>Unavailable: {{ chakwal_stats.unavailable }}</p>
-    <p>Suspended: {{ chakwal_stats.suspended }}</p>
+
+  <!-- CHAKWAL -->
+  <div class="card" style="padding:1.25rem;">
+    <h3 style="color:var(--primary); margin-bottom:0.75rem; font-size:1.1rem;">CHAKWAL</h3>
+    <p style="margin:0.3rem 0;"><strong>Total:</strong> {{ chakwal_stats.total }}</p>
+    <p style="margin:0.3rem 0;"><strong>Available:</strong> {{ chakwal_stats.available }}</p>
+    <p style="margin:0.3rem 0;"><strong>Unavailable:</strong> {{ chakwal_stats.unavailable }}</p>
+    <p style="margin:0.3rem 0;"><strong>Suspended:</strong> {{ chakwal_stats.suspended }}</p>
+
+    <h4 style="color:var(--primary); margin:1rem 0 0.5rem; font-size:0.95rem;">Blood Group Breakdown</h4>
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.4rem;">
+      {% for bg, count in chakwal_stats.blood_groups %}
+      <div style="background:var(--bg-secondary, #f5f5f5); border-radius:6px; padding:0.4rem; text-align:center;">
+        <div style="font-size:0.75rem; color:#666;">{{ bg }}</div>
+        <div style="font-weight:700; font-size:1rem;">{{ count }}</div>
+      </div>
+      {% endfor %}
+    </div>
   </div>
+
 </div>
+
+<style>
+@media (max-width: 700px) {
+  div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
 {% endblock %}
